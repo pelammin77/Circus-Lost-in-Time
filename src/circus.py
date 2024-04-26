@@ -24,10 +24,25 @@ characters = [acrobat, knife_man, strong_man]
 active_character_index = 0
 active_character = characters[active_character_index]
 
-def draw_active_character_name():
+
+def create_characters(characters):
+    pass
+
+def draw(windows, characters, active_character):
+    # Piirrä kaikki hahmot näytölle
+    for character in characters:
+        window.blit(character.image, character.rect)
+
     font = pygame.font.SysFont('Arial', 24)
     text = font.render(f"Active character: {active_character.name}", True, pygame.Color('black'))
     window.blit(text, (10, 10))  # Piirretään teksti ikkunan yläkulmaan
+
+    pygame.display.flip()
+
+def update(active_character):
+    # Liikuta ja päivitä aktiivinen hahmo
+    active_character.move()
+    active_character.update()
 
 
 # game loop
@@ -59,15 +74,10 @@ while run:
                 active_character.keys_pressed['left'] = False
                 active_character.keys_pressed['right'] = False
 
-    # Liikuta ja päivitä aktiivinen hahmo
-    active_character.move()
-    active_character.update()
 
-    # Piirrä kaikki hahmot näytölle
-    for character in characters:
-        window.blit(character.image, character.rect)
 
-    draw_active_character_name()
-    pygame.display.flip()
+    update(active_character)
+    draw(window, characters, active_character)
+
 
 pygame.quit()
