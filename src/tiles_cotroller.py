@@ -17,3 +17,20 @@ def get_tile(tile_x, tile_y):
     if not tilesheet:
         load_tilesheet()
     return tilesheet.subsurface(pygame.Rect(tile_x * TILE_SIZE, tile_y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+
+
+def create_level(level_map, tile_size):
+    game_objects = pygame.sprite.Group()
+    y = 0
+    for row in level_map:
+        x = 0
+        for col in row:
+            if col == '-':
+                tile = GrassGround('path_to_grass_image.png', (x * tile_size, y * tile_size))
+                game_objects.add(tile)
+            elif col == '|':
+                tile = Wall('path_to_wall_image.png', (x * tile_size, y * tile_size), durability=100)
+                game_objects.add(tile)
+            x += 1
+        y += 1
+    return game_objects

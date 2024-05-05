@@ -3,6 +3,28 @@ import random
 from colors import colors
 from Characters import *
 from tiles_cotroller import get_tile, load_tilesheet
+from Game_objects import *
+
+
+def create_level(level_map, tile_size):
+    game_objects = pygame.sprite.Group()
+    y = 0
+    for row in level_map:
+        x = 0
+        for col in row:
+            if col == '-':
+                tile = GrassGround('"../img/grass_ground.png"', (x * tile_size, y * tile_size))
+                game_objects.add(tile)
+            elif col == '|':
+                tile = Wall('../img/ground_wall.png', (x * tile_ize, y * tile_size), durability=100)
+                game_objects.add(tile)
+            x += 1
+        y += 1
+    return game_objects
+
+
+
+
 pygame.init()
 WIDTH = 800
 HEIGTH = 600
