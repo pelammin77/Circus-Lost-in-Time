@@ -1,8 +1,9 @@
 import pygame
+from pathlib import Path
 
 # Asetukset
 TILE_SIZE = 32  # Oletetaan, että jokainen tiili on 32x32 pikseliä
-TILESHEET_PATH = '../img/Assets.png'  # Oleta, että tämä on tilesheetisi polku
+TILESHEET_PATH = str(Path(__file__).resolve().parent.parent / 'img' / 'Assets.png')
 
 # Globaali muuttuja tilesheetille
 tilesheet = None

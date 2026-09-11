@@ -1,5 +1,6 @@
 import pygame
 import random
+from pathlib import Path
 from colors import colors
 from Characters import *
 from tiles_cotroller import get_tile, load_tilesheet
@@ -33,9 +34,10 @@ pygame.display.set_caption("Circus lost in time")
 timer = pygame.time.Clock()
 fps = 60
 font = pygame.font.SysFont('Arial', 24)
-acrobat = Acrobat("../img/acrobat_char_sprite.png", (100, 400), 10)
-knife_man = KnifeThrower("../img/knife_man_sprite.png", (250, 400), 4)
-strong_man = Strongman("../img/strong_man_char_sprite.png", (350,400), 2)
+ASSETS = Path(__file__).resolve().parent.parent / 'img'
+acrobat = Acrobat(str(ASSETS / 'acrobat_char_sprite.png'), (100, 400), 10)
+knife_man = KnifeThrower(str(ASSETS / 'knife_man_sprite.png'), (250, 400), 4)
+strong_man = Strongman(str(ASSETS / 'strong_man_char_sprite.png'), (350,400), 2)
 load_tilesheet()
 example_tile = get_tile(0, 0)
 
@@ -61,17 +63,20 @@ def draw(windows, characters, active_character):
 
     pygame.display.flip()
 
-def update(active_character):
-    # Liikuta ja päivitä aktiivinen hahmo
+def update(active_character, dt):
+    # Inactive characters stop walking but their animation/physics keeps updating.
+    for character in characters:
+        character.is_moving = False
     active_character.move()
-    active_character.update()
+    for character in characters:
+        character.update(dt)
 
 
 # game loop
 
 run = True
 while run:
-    timer.tick(fps)
+    dt = timer.tick(fps) / 1000.0
     window.fill(colors["sky_blue"])
     # Piirrä esimerkki tiili näytölle
     window.blit(example_tile, (100, 100))
@@ -87,18 +92,15 @@ while run:
                 # Vaihda aktiivista hahmoa
                 active_character_index = (active_character_index + 1) % len(characters)
                 active_character = characters[active_character_index]
-            elif event.key == pygame.K_LEFT:
-                active_character.keys_pressed['left'] = True
-            elif event.key == pygame.K_RIGHT:
-                active_character.keys_pressed['right'] = True
-        elif event.type == pygame.KEYUP:
-            if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
-                active_character.keys_pressed['left'] = False
-                active_character.keys_pressed['right'] = False
 
 
 
-    update(active_character)
+    pressed = pygame.key.get_pressed()
+    focused = pygame.key.get_focused()
+    for character in characters:
+        character.keys_pressed['left'] = bool(focused and character is active_character and pressed[pygame.K_LEFT])
+        character.keys_pressed['right'] = bool(focused and character is active_character and pressed[pygame.K_RIGHT])
+    update(active_character, dt)
     draw(window, characters, active_character)
 
 
