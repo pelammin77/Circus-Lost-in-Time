@@ -1,0 +1,40 @@
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local Python / Conda environments (keep environment.yml and requirements.txt)
+.venv/
+venv/
+env/
+.conda/
+
+# Local IDE settings
+.idea/
+.vscode/
+*.iml
+
+# Packaging output
+build/
+dist/
+*.egg-info/
+
+# Local secrets (a documented example may be committed)
+.env
+.env.*
+!.env.example
+
+# Operating system files and temporary editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Game assets, source artwork, tools, tests and launch scripts stay versioned.

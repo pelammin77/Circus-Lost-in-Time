@@ -5,6 +5,9 @@ from colors import colors
 from Characters import *
 from tiles_cotroller import get_tile, load_tilesheet
 from Game_objects import *
+from carry_objects import CircusCrate
+from selection_marker import SelectionMarker
+from platforms import Platform,GROUND_TOP
 
 
 def create_level(level_map, tile_size):
@@ -34,15 +37,28 @@ pygame.display.set_caption("Circus lost in time")
 timer = pygame.time.Clock()
 fps = 60
 font = pygame.font.SysFont('Arial', 24)
+selection_marker=SelectionMarker()
 ASSETS = Path(__file__).resolve().parent.parent / 'img'
 acrobat = Acrobat(str(ASSETS / 'acrobat_char_sprite.png'), (100, 400), 10)
-knife_man = KnifeThrower(str(ASSETS / 'knife_man_sprite.png'), (250, 400), 4)
-strong_man = Strongman(str(ASSETS / 'strong_man_char_sprite.png'), (350,400), 2)
+knife_man = KnifeThrower(str(ASSETS / 'knife_man_sprite.png'), (720, 400), 4)
+strong_man = Strongman(str(ASSETS / 'strong_man_char_sprite.png'), (20,400), 2)
 load_tilesheet()
 example_tile = get_tile(0, 0)
 
 # Lista kaikista hahmoista
 characters = [acrobat, knife_man, strong_man]
+ground=Platform((0,GROUND_TOP,WIDTH,HEIGTH-GROUND_TOP))
+# Leave enough headroom below while retaining the crate-assisted jump height.
+upper_platform=Platform((520,GROUND_TOP-85,200,6))
+for character in characters:
+    character.rect.bottom=GROUND_TOP+2
+acrobat.platforms=[upper_platform]
+crates=pygame.sprite.Group(CircusCrate((240,GROUND_TOP)))
+strong_man.crates=list(crates)
+strong_man.blockers=characters+[upper_platform]
+for character in characters:
+    character.solids=list(crates)+[upper_platform]
+acrobat.floor_y=acrobat.rect.y
 
 # Määritä aktiivinen hahmo
 active_character_index = 0
@@ -53,14 +69,31 @@ def create_characters(characters):
     pass
 
 def draw(windows, characters, active_character):
+    ground.draw(window)
+    upper_platform.draw(window)
+    for crate in crates:
+        if crate.holder is None:
+            window.blit(crate.image,crate.rect)
     # Piirrä kaikki hahmot näytölle
     for character in characters:
         window.blit(character.image, character.rect)
+        if hasattr(character, 'projectiles'):
+            character.projectiles.draw(window)
+        if getattr(character,'carried',None):
+            window.blit(character.carried.image,character.carried.rect)
 
     font = pygame.font.SysFont('Arial', 24)
-    text = font.render(f"Active character: {active_character.name}", True, pygame.Color('black'))
+    names={'Acrobat':'Akrobaatti','Knife thrower':'Veitsenheittäjä','Strong man':'Voimamies'}
+    text = font.render(f"Valittu: {names[active_character.name]}  |  Ctrl: vaihda hahmoa", True, pygame.Color('black'))
     window.blit(text, (10, 10))  # Piirretään teksti ikkunan yläkulmaan
+    if active_character is strong_man:
+        message=strong_man.hint or 'Nuolet: kävele/työnnä  |  Välilyönti: nosta/laske'
+        window.blit(font.render(message,True,pygame.Color('black')),(10,40))
+    elif active_character is acrobat:
+        message='Välilyönti: hyppää  |  Reunan yli kävelemällä putoat alas'
+        window.blit(font.render(message,True,pygame.Color('black')),(10,40))
 
+    selection_marker.draw(window,active_character)
     pygame.display.flip()
 
 def update(active_character, dt):
@@ -78,8 +111,6 @@ run = True
 while run:
     dt = timer.tick(fps) / 1000.0
     window.fill(colors["sky_blue"])
-    # Piirrä esimerkki tiili näytölle
-    window.blit(example_tile, (100, 100))
 
     # Käsittele tapahtumia
     for event in pygame.event.get():

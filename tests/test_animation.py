@@ -153,7 +153,7 @@ class AnimationTests(unittest.TestCase):
         self.assertEqual(game['active_character'].name, 'Knife thrower')
         self.assertEqual(game['acrobat'].animation.state, 'idle')
         self.assertFalse(game['acrobat'].keys_pressed['right'])
-        self.assertEqual(game['knife_man'].rect.x, 254)
+        self.assertEqual(game['knife_man'].rect.x, 724)
 
 
 if __name__ == '__main__':

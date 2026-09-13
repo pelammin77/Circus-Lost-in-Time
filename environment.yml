@@ -1,0 +1,9 @@
+name: circus-lost-in-time
+channels:
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - pillow
+  - pip:
+      - pygame==2.6.1

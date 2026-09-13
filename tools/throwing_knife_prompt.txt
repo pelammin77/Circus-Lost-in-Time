@@ -1,0 +1,4 @@
+Tool: built-in image_gen.imagegen
+Prompt: Create one tiny retro pixel art throwing knife sprite for a 2D circus game. Single knife horizontal, handle on LEFT, sharp silver steel blade pointing RIGHT. Dark burgundy brown wrapped short handle, small dark metal guard, silver grey blade with one pale blue highlight and dark outline. Designed to downscale to 24 by 10 pixels. Crisp hard pixel edges, minimal palette, no antialiasing aesthetic, centered with generous padding. Actual transparent alpha background, no checkerboard, no shadow, no text, no hands, no extra objects. A compact functional throwing knife, not a sword.
+
+Preparation: crop to alpha bounds, proportional Pillow nearest-neighbor thumbnail (24,10), center on transparent 28x14 canvas. Preserve generated alpha. Source: img/throwing_knife_source.png.
